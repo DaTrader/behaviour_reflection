@@ -57,7 +57,7 @@ defmodule Behaviour.Reflection do
   end
 
   defp implements_behaviour?(module, behaviour) do
-    module.module_info[:attributes]
+    module.module_info()[:attributes]
     |> Keyword.get_values(:behaviour)
     |> List.flatten()
     |> Enum.member?(behaviour)
@@ -71,7 +71,7 @@ defmodule Behaviour.Reflection do
     Path.wildcard(Path.join([Mix.Project.build_path(), "**/ebin/**/*.beam"]))
     # Parse the BEAM for behaviour implementations
     |> Stream.map(fn path ->
-      {:ok, {mod, chunks}} = :beam_lib.chunks('#{path}', [:attributes])
+      {:ok, {mod, chunks}} = :beam_lib.chunks(~c"#{path}", [:attributes])
       {mod, get_in(chunks, [:attributes, :behaviour])}
     end)
     # Filter out behaviours we don't care about and duplicates
